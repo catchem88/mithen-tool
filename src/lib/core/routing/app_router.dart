@@ -3,9 +3,12 @@ import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../extensions.dart';
+import '../../features/cleanup/presentation/cleanup_page.dart';
 import '../../features/home/home_page.dart';
 import '../../features/ms_store/presentation/pages/ms_store_page.dart';
 import '../../features/ms_store/presentation/pages/ms_store_product_page.dart';
+import '../../features/system_monitor/presentation/system_monitor_page.dart';
+import '../../features/tools/tools_page.dart';
 import '../../features/tweaks/performance/performance_page.dart';
 import '../../features/tweaks/personalization/personalization_page.dart';
 import '../../features/tweaks/security/security_page.dart';
@@ -13,9 +16,7 @@ import '../../features/tweaks/tweaks_page.dart';
 import '../../features/tweaks/updates/updates_page.dart';
 import '../../features/tweaks/utilities/utilities_page.dart';
 import '../../main.dart';
-import '../services/win_registry_service.dart';
 import '../settings/settings_page.dart';
-import '../widgets/unsupported_widget.dart';
 import 'app_routes.dart';
 import 'app_shell.dart';
 
@@ -29,12 +30,6 @@ GoRouter appRouter(Ref ref) {
   final router = GoRouter(
     navigatorKey: rootNavigatorKey,
     initialLocation: initialRoute ?? RouteMeta.home.path,
-    redirect: (context, state) {
-      if (!WinRegistryService.isSupported) {
-        return AppRoutes.unsupported;
-      }
-      return null; // Allow navigation
-    },
     routes: [
       ShellRoute(
         navigatorKey: _shellNavigatorKey,
@@ -123,13 +118,27 @@ GoRouter appRouter(Ref ref) {
             ],
           ),
           GoRoute(
+            path: RouteMeta.systemMonitor.path,
+            name: 'monitor',
+            builder: (context, state) => const SystemMonitorPage(),
+          ),
+          GoRoute(
+            path: RouteMeta.tools.path,
+            name: 'tools',
+            builder: (context, state) => const ToolsPage(),
+          ),
+          GoRoute(
+            path: RouteMeta.cleanup.path,
+            name: 'cleanup',
+            builder: (context, state) => const CleanupPage(),
+          ),
+          GoRoute(
             path: RouteMeta.settings.path,
             name: 'settings',
             builder: (context, state) => const SettingsPage(),
           ),
         ],
       ),
-      GoRoute(path: AppRoutes.unsupported, builder: (context, state) => const UnsupportedWidget()),
     ],
   );
 

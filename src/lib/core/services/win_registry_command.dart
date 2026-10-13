@@ -7,7 +7,8 @@ import '../../utils.dart';
 
 // CLI generated but for some reason using `part '.g.dart'` has issues
 
-abstract class _WinRegistryServiceCommandBase(final WinRegistryService _service) extends Command<void>;
+abstract class _WinRegistryServiceCommandBase(final WinRegistryService _service)
+    extends Command<void>;
 
 final class WinRegistryServiceCliCommand(super.service) extends _WinRegistryServiceCommandBase {
   this {

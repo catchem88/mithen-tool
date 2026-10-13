@@ -750,5 +750,5 @@ enum MsStoreXmlTemplate(final String xml) {
 		</GetExtendedUpdateInfo2>
 	</s:Body>
 </s:Envelope>
-''');
+'''),
 }

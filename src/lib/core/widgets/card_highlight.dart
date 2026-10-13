@@ -29,27 +29,25 @@ const _cardDescStyleForLight = TextStyle(
 const _imgXY = 48.0;
 
 class const CardHighlight({
-    super.key,
-    final IconData? icon,
-    required final String label,
-    final String? description,
-    final String? descriptionLink,
-    final String? image,
-    final Widget? leading,
-    final Widget? action,
-    final List<Widget>? children,
-    final VoidCallback? onPressed,
-    final bool initiallyExpanded = false,
-    final Color? backgroundColor,
-  }) extends StatelessWidget {
-  this : assert(
-         icon == null || image == null,
-         'Cannot provide both icon and image',
-       ),
-       assert(
-         leading == null || (icon == null && image == null),
-         'Cannot provide leading with icon or image',
-       );
+  super.key,
+  final IconData? icon,
+  required final String label,
+  final String? description,
+  final String? descriptionLink,
+  final String? image,
+  final Widget? leading,
+  final Widget? action,
+  final List<Widget>? children,
+  final VoidCallback? onPressed,
+  final bool initiallyExpanded = false,
+  final Color? backgroundColor,
+}) extends StatelessWidget {
+  this
+    : assert(icon == null || image == null, 'Cannot provide both icon and image'),
+      assert(
+        leading == null || (icon == null && image == null),
+        'Cannot provide leading with icon or image',
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -106,16 +104,16 @@ class const CardHighlight({
 }
 
 class const _ExpandableCard({
-    required final int pageStorageKey,
-    required final bool initiallyExpanded,
-    required final Widget leadingWidget,
-    required final String label,
-    required final String? description,
-    required final String? descriptionLink,
-    required final Widget? action,
-    required final List<Widget>? children,
-    final Color? backgroundColor,
-  }) extends ConsumerStatefulWidget {
+  required final int pageStorageKey,
+  required final bool initiallyExpanded,
+  required final Widget leadingWidget,
+  required final String label,
+  required final String? description,
+  required final String? descriptionLink,
+  required final Widget? action,
+  required final List<Widget>? children,
+  final Color? backgroundColor,
+}) extends ConsumerStatefulWidget {
   @override
   ConsumerState<_ExpandableCard> createState() => _ExpandableCardState();
 }
@@ -257,15 +255,15 @@ class _ExpandableCardState() extends ConsumerState<_ExpandableCard> {
 }
 
 class const _ClickableCardChevron({
-    required final int pageStorageKey,
-    required final VoidCallback? onPressed,
-    required final Widget leadingWidget,
-    required final String label,
-    required final String? description,
-    required final String? descriptionLink,
-    required final Widget? action,
-    final Color? backgroundColor,
-  }) extends StatelessWidget {
+  required final int pageStorageKey,
+  required final VoidCallback? onPressed,
+  required final Widget leadingWidget,
+  required final String label,
+  required final String? description,
+  required final String? descriptionLink,
+  required final Widget? action,
+  final Color? backgroundColor,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final FluentThemeData theme = context.theme;
@@ -313,17 +311,18 @@ class const _ClickableCardChevron({
 
 /// A list tile widget used in [CardHighlight] for children.
 class const CardListTile({
-    super.key,
-    final Widget? leading,
-    required final String title,
-    final String? description,
-    final String? descriptionLink,
-    final Widget? trailing,
-    final EdgeInsetsGeometry contentPadding = const .symmetric(horizontal: 17.0, vertical: 9.0),
-    /// Whether to add extra 28px padding on the right when trailing is present.
+  super.key,
+  final Widget? leading,
+  required final String title,
+  final String? description,
+  final String? descriptionLink,
+  final Widget? trailing,
+  final EdgeInsetsGeometry contentPadding = const .symmetric(horizontal: 17.0, vertical: 9.0),
+
+  /// Whether to add extra 28px padding on the right when trailing is present.
   /// Set to false for standalone cards, true for Expander children.
   final bool extraTrailingPadding = true,
-  }) extends StatelessWidget {
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final FluentThemeData theme = context.theme;
@@ -383,12 +382,12 @@ class const CardListTile({
 
 /// A toggle switch widget used in [CardHighlight] for actions.
 class const CardToggleSwitch({
-    super.key,
-    required final bool value,
-    required final ValueChanged<bool> onChanged,
-    final bool requiresRestart = false,
-    final bool enabled = true,
-  }) extends StatelessWidget {
+  super.key,
+  required final bool value,
+  required final ValueChanged<bool> onChanged,
+  final bool requiresRestart = false,
+  final bool enabled = true,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -427,9 +426,12 @@ class const ChevronRightAction({super.key}) extends StatelessWidget {
 /// A status text widget that shows on/off status.
 ///
 /// Useful when you want to show status but without an interactive switch.
-class const CardStatusText({super.key, 
+class const CardStatusText({
+  super.key,
+
   /// Status value to display
-  required final bool value}) extends StatelessWidget {
+  required final bool value,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(value ? t.onStatus : t.offStatus);

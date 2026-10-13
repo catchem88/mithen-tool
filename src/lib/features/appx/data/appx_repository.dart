@@ -64,8 +64,7 @@ abstract interface class AppxRepository() {
 final class NativeAppxRepository() implements AppxRepository {
   static const String _storeBase =
       r'SOFTWARE\Microsoft\Windows\CurrentVersion\Appx\AppxAllUserStore';
-  static const String _runOncePath =
-      r'SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce';
+  static const String _runOncePath = r'SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce';
   static const String _runOnceValue = 'RevitoolAppxCleanup';
 
   // Cached initialization future.
@@ -156,8 +155,7 @@ final class NativeAppxRepository() implements AppxRepository {
     final String exePath = Platform.resolvedExecutable;
     final allUsersFlag = allUsers ? ' --all-users' : '';
     final String namesArg = fullNames.join(',');
-    final command =
-        '"$exePath" appx$allUsersFlag --no-schedule-startup --remove "$namesArg"';
+    final command = '"$exePath" appx$allUsersFlag --no-schedule-startup --remove "$namesArg"';
     await WinRegistryService.writeRegistryValue(
       LOCAL_MACHINE,
       _runOncePath,

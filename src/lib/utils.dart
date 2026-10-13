@@ -18,31 +18,23 @@ final String directoryExe = Directory(
 ).path;
 
 String systemLanguage =
-    WinRegistryService.readString(
-      CURRENT_USER,
-      r'Control Panel\International',
-      'LocaleName',
-    ) ??
+    WinRegistryService.readString(CURRENT_USER, r'Control Panel\International', 'LocaleName') ??
     'en_US';
 
 String appLanguage =
-    WinRegistryService.readString(
-      LOCAL_MACHINE,
-      r'SOFTWARE\Revision\Revision Tool',
-      'Language',
-    ) ??
+    WinRegistryService.readString(LOCAL_MACHINE, r'SOFTWARE\Mithen\Mithen-Tool', 'Language') ??
     'en';
 
-final String ameTemp = path.join(Directory.systemTemp.path, 'AME', 'Playbooks', 'Revision-ReviOS');
+final String ameTemp = path.join(Directory.systemTemp.path, 'AME', 'Playbooks');
 
-final String tempReviPath = path.join(Directory.systemTemp.path, 'Revision-Tool', 'Logs');
+final String tempToolPath = path.join(Directory.systemTemp.path, 'Mithen-Tool', 'Logs');
 
 final logger = Logger(
   filter: ProductionFilter(),
   level: Level.debug,
   printer: SimplePrinter(printTime: true, colors: false),
   output: MultiOutput([
-    AdvancedFileOutput(overrideExisting: true, path: tempReviPath),
+    AdvancedFileOutput(overrideExisting: true, path: tempToolPath),
     ConsoleOutput(),
   ]),
 );

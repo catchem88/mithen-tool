@@ -10,7 +10,11 @@ import '../../../core/services/win_registry_service.dart';
 
 part 'personalization_service.g.dart';
 
-enum NotificationMode() { on, offMinimal, offFull }
+enum NotificationMode() {
+  on,
+  offMinimal,
+  offFull,
+}
 
 @CliCommand(name: 'personalization', description: 'Personalization tweaks')
 abstract class PersonalizationService() {

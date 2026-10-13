@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:revitool/core/services/win_registry_service.dart';
 import 'package:win32_registry/win32_registry.dart';
 
-const String testRegistryPath = r'SOFTWARE\Revision\RevitoolTest';
+const String testRegistryPath = r'SOFTWARE\Mithen\MithentoolTest';
 
 void main() {
   const skipIntegration = bool.fromEnvironment('SKIP_INTEGRATION', defaultValue: true);
@@ -378,7 +378,7 @@ void main() {
 
       test('deleteKey handles non-existent key gracefully', () async {
         await expectLater(
-          WinRegistryService.deleteKey(CURRENT_USER, r'SOFTWARE\Revision\NonExistentKey12345'),
+          WinRegistryService.deleteKey(CURRENT_USER, r'SOFTWARE\Mithen\NonExistentKey12345'),
           completes,
         );
       });
@@ -432,7 +432,7 @@ void main() {
         expect(
           () => WinRegistryService.readString(
             CURRENT_USER,
-            r'SOFTWARE\Revision\INVALID\PATH\THAT\DOES\NOT\EXIST',
+            r'SOFTWARE\Mithen\INVALID\PATH\THAT\DOES\NOT\EXIST',
             'Value',
           ),
           returnsNormally,
@@ -441,7 +441,7 @@ void main() {
         expect(
           () => WinRegistryService.readInt(
             CURRENT_USER,
-            r'SOFTWARE\Revision\INVALID\PATH\THAT\DOES\NOT\EXIST',
+            r'SOFTWARE\Mithen\INVALID\PATH\THAT\DOES\NOT\EXIST',
             'Value',
           ),
           returnsNormally,
@@ -450,7 +450,7 @@ void main() {
         expect(
           () => WinRegistryService.readBinary(
             CURRENT_USER,
-            r'SOFTWARE\Revision\INVALID\PATH\THAT\DOES\NOT\EXIST',
+            r'SOFTWARE\Mithen\INVALID\PATH\THAT\DOES\NOT\EXIST',
             'Value',
           ),
           returnsNormally,
@@ -461,7 +461,7 @@ void main() {
         await expectLater(
           WinRegistryService.deleteValue(
             CURRENT_USER,
-            r'SOFTWARE\Revision\NonExistent\Path\That\Does\Not\Exist',
+            r'SOFTWARE\Mithen\NonExistent\Path\That\Does\Not\Exist',
             'Value',
           ),
           completes,
@@ -470,7 +470,7 @@ void main() {
         await expectLater(
           WinRegistryService.deleteKey(
             CURRENT_USER,
-            r'SOFTWARE\Revision\NonExistent\Path\That\Does\Not\Exist',
+            r'SOFTWARE\Mithen\NonExistent\Path\That\Does\Not\Exist',
           ),
           completes,
         );

@@ -120,10 +120,7 @@ final class FakeAppxRepository({
       removedInboxApps.contains(fullName);
 
   @override
-  Future<void> scheduleRunOnce({
-    required Set<String> fullNames,
-    bool allUsers = false,
-  }) async {
+  Future<void> scheduleRunOnce({required Set<String> fullNames, bool allUsers = false}) async {
     scheduledRunOnce.add(fullNames);
   }
 }

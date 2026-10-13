@@ -6,3 +6,4 @@
 library;
 
 export '../../features/appx/presentation/appx_providers.dart';
+export '../../features/system_monitor/presentation/system_monitor_providers.dart';

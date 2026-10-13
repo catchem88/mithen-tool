@@ -6,7 +6,11 @@ import '../../../core/services/win_registry_service.dart';
 import '../../../core/trusted_installer/trusted_installer_service.dart';
 part 'performance_service.g.dart';
 
-enum ServiceGrouping() { forced, recommended, disabled }
+enum ServiceGrouping() {
+  forced,
+  recommended,
+  disabled,
+}
 
 const _userSvcSplitDisabled = {'CDPUserSvc_', 'OneSyncSvc_', 'WpnUserService_'};
 
@@ -259,9 +263,9 @@ class const PerformanceServiceImpl() implements PerformanceService {
         null;
   }
 
-  /// Revision's custom power plan based on Windows's Ultimate Performance with additional changes.
+  /// Mithen's custom power plan based on Windows's Ultimate Performance with additional changes.
   ///
-  /// Power Scheme GUID change is intentional to match the ReviOS Playbook's UniqueId.
+  /// Power Scheme GUID change is intentional to match the MithenOS Playbook's UniqueId.
   ///
   /// For more info:
   /// https://learn.microsoft.com/en-us/windows-server/administration/performance-tuning/hardware/power/power-performance-tuning#processor-performance-increase-and-decrease-of-thresholds-and-policies
@@ -273,7 +277,7 @@ class const PerformanceServiceImpl() implements PerformanceService {
 
     const command = r'''
 powercfg -duplicatescheme e9a42b02-d5df-448d-aa00-03f14749eb61 6a93ec26-284d-4943-9fc4-c9616def55c6
-powercfg -changename 6a93ec26-284d-4943-9fc4-c9616def55c6 "Revision - Ultra Performance" "Windows's Ultimate Performance with additional changes."
+powercfg -changename 6a93ec26-284d-4943-9fc4-c9616def55c6 "Mithen - Ultra Performance" "Windows's Ultimate Performance with additional changes."
 powercfg -s 6a93ec26-284d-4943-9fc4-c9616def55c6
 if (Test-Path "HKLM:\SYSTEM\ControlSet001\Control\Power\User\PowerSchemes\3ff9831b-6f80-4830-8178-736cd4229e7b") {
   powercfg -delete 3ff9831b-6f80-4830-8178-736cd4229e7b

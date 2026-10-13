@@ -2,7 +2,8 @@ import 'package:fluent_ui/fluent_ui.dart';
 
 import '../../../i18n/generated/strings.g.dart';
 
-Future<Object?> showLoadingDialog(BuildContext context, String title) {
+/// Blocks the UI behind a modal spinner until the caller pops the dialog.
+Future<Object?> showLoadingDialog(BuildContext context, String title, {String? message}) {
   return showDialog(
     context: context,
     dismissWithEsc: false,
@@ -12,7 +13,11 @@ Future<Object?> showLoadingDialog(BuildContext context, String title) {
       content: Center(
         child: Column(
           mainAxisAlignment: .center,
-          children: [const ProgressRing(), const SizedBox(height: 10), Text(t.msstoreWait)],
+          children: [
+            const ProgressRing(),
+            const SizedBox(height: 10),
+            Text(message ?? t.msstoreWait),
+          ],
         ),
       ),
     ),

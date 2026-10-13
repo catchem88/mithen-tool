@@ -54,7 +54,7 @@ Future<void> main(List<String> args) async {
 
       stdout.writeln('  Downloading $name...');
       final HttpClientRequest downloadReq = await client.getUrl(Uri.parse(downloadUrl));
-      downloadReq.headers.set('User-Agent', 'Revitool-Build');
+      downloadReq.headers.set('User-Agent', 'Mithentool-Build');
       if (token != null && token.isNotEmpty) {
         downloadReq.headers.set('Authorization', 'Bearer $token');
       }

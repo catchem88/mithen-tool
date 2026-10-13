@@ -3,14 +3,13 @@ import 'package:fluentui_system_icons/fluentui_system_icons.dart' as msicons;
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 // ignore: depend_on_referenced_packages
-import 'package:vector_graphics/vector_graphics.dart';
 
 import '../../i18n/generated/strings.g.dart';
 
 enum RouteSection() {
   main,
   footer,
-  search
+  search,
 }
 
 enum RouteMeta({
@@ -18,42 +17,13 @@ enum RouteMeta({
   required final RouteSection section,
   required final Object? icon,
 }) {
-  home(
-    path: '/',
-    section: .main,
-    icon: SvgPicture(
-      AssetBytesLoader('assets/icon/pane/ic_revi_fluent_home_color.svg.vec'),
-      width: 20,
-      height: 20,
-    ),
-  ),
-  tweaks(
-    path: '/tweaks',
-    section: .main,
-    icon: SvgPicture(
-      AssetBytesLoader('assets/icon/pane/ic_revi_fluent_wrench_24_color.svg.vec'),
-      width: 20,
-      height: 20,
-    ),
-  ),
-  msStore(
-    path: '/msstore',
-    section: .main,
-    icon: SvgPicture(
-      AssetBytesLoader('assets/icon/pane/ic_revi_fluent_ms_store_48_color.svg.vec'),
-      width: 24,
-      height: 24,
-    ),
-  ),
-  settings(
-    path: '/settings',
-    section: .footer,
-    icon: SvgPicture(
-      AssetBytesLoader('assets/icon/pane/ic_fluent_settings_48_color.svg.vec'),
-      width: 20,
-      height: 20,
-    ),
-  ),
+  home(path: '/', section: .main, icon: msicons.FluentIcons.home_24_regular),
+  tweaks(path: '/tweaks', section: .main, icon: msicons.FluentIcons.wrench_24_regular),
+  msStore(path: '/msstore', section: .main, icon: msicons.FluentIcons.store_microsoft_24_regular),
+  systemMonitor(path: '/monitor', section: .main, icon: msicons.FluentIcons.shield_lock_20_regular),
+  tools(path: '/tools', section: .main, icon: msicons.FluentIcons.toolbox_24_regular),
+  cleanup(path: '/cleanup', section: .main, icon: msicons.FluentIcons.broom_24_regular),
+  settings(path: '/settings', section: .footer, icon: msicons.FluentIcons.settings_24_regular),
   tweaksSecurity(
     path: '/tweaks/security',
     section: .search,
@@ -85,6 +55,9 @@ enum RouteMeta({
       .home => t.pageHome,
       .tweaks => t.pageTweaks,
       .msStore => t.pageMSStore,
+      .systemMonitor => t.pageSystemMonitor,
+      .tools => t.pageTools,
+      .cleanup => t.pageCleanup,
       .settings => t.pageSettings,
       .tweaksSecurity => t.pageTweaksSecurity,
       .tweaksPerformance => t.pageTweaksPerformance,
@@ -108,8 +81,6 @@ enum RouteMeta({
 }
 
 class AppRoutes() {
-  static const String unsupported = '/unsupported';
-
   static const List<RouteMeta> navigationRoutes = _navigationRoutes;
 
   static final List<NavigationPaneItem> mainPaneItems = _buildPaneItems(
@@ -188,7 +159,7 @@ class AppRoutes() {
   }
 }
 
-const _mainNavigationRoutes = <RouteMeta>[.home, .tweaks, .msStore];
+const _mainNavigationRoutes = <RouteMeta>[.home, .tweaks, .msStore, .systemMonitor, .tools];
 
 const _footerNavigationRoutes = <RouteMeta>[.settings];
 

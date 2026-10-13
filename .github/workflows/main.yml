@@ -64,8 +64,6 @@ jobs:
         working-directory: src
       
       - name: Download bundled WinSxS packages
-        env:
-          GH_TOKEN: ${{ secrets.TOKEN }}
         run: melos run bundle:winsxs
         working-directory: src
 
@@ -73,7 +71,7 @@ jobs:
         run: melos run codegen
         working-directory: src
 
-      - name: Build revitool CLI
+      - name: Build MithenTool CLI
         env:
           APP_VERSION: ${{ env.NEW_VERSION }}
         run: melos run build:cli
@@ -88,7 +86,7 @@ jobs:
         run: melos run test
         working-directory: src
 
-      - name: Build revitool GUI
+      - name: Build MithenTool GUI
         run: flutter build windows --build-name=${{ env.NEW_VERSION }} --build-number=1 --obfuscate --split-debug-info=/symbols --dart-define=APP_VERSION=${{ env.NEW_VERSION }}
         working-directory: src
 
@@ -105,15 +103,15 @@ jobs:
 
       - name: Calculate SHA256 hash
         run: |
-          $hash = Get-FileHash "RevisionTool-Setup.exe" -Algorithm SHA256
+          $hash = Get-FileHash "res\MithenTool-Setup.exe" -Algorithm SHA256
           echo "SHA256_HASH=$($hash.Hash)" | Out-File -FilePath $env:GITHUB_ENV -Append
         
       - name: Release
         uses: svenstaro/upload-release-action@v2
         with:
-          repo_token: ${{ secrets.TOKEN }}
-          file: RevisionTool-Setup.exe
-          asset_name: RevisionTool-Setup.exe
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: res/MithenTool-Setup.exe
+          asset_name: MithenTool-Setup.exe
           tag: ${{ github.ref }}
           overwrite: true
           body: "SHA256: `${{ env.SHA256_HASH }}`"

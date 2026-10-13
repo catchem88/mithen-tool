@@ -1,4 +1,5 @@
 import 'package:fluent_ui/fluent_ui.dart';
+
 import '../../extensions.dart';
 
 class const Subtitle({super.key, required final Widget content}) extends StatelessWidget {

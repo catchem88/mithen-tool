@@ -21,7 +21,7 @@ Use the visual language of Windows Settings and ASD-STE100 Simplified Technical 
 - Action names and buttons: start with a direct verb, such as Check for updates, Choose packages, or Turn off protections.
 - Category-card descriptions: use a short list of concepts when a sentence adds no useful information, such as Caching, compression, and NTFS overhead.
 - Setting descriptions: state the purpose first. Add a separate short sentence for an important side effect or limitation.
-- Status text: state the current condition, such as Update available, No packages found, or Revision Tool is up to date.
+- Status text: state the current condition, such as Update available, No packages found, or MithenTool is up to date.
 - Dialog text: state the required action and its reason. Use a question only when the user must make a decision.
 
 ## Localization constraints

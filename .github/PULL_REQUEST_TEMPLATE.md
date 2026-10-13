@@ -2,7 +2,7 @@ Resolves
 
 ## Submitter Checklist:
 
-- [ ] There is a [ticket](https://github.com/meetrevision/revision-tool/issues) for my issue
+- [ ] There is a [ticket](https://github.com/catchem88/mithen-tool/issues) for my issue
 - [ ] Wrote a good [PR/commit description](https://google.github.io/eng-practices/review/developer/cl-descriptions.html)
 - [ ] Discussed about the issue with reviewers in Discussions, Issues or other platforms 
 - [ ] Confirmed that the PR only includes changes related to my issue

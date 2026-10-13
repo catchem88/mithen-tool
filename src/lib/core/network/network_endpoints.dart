@@ -1,7 +1,5 @@
 enum GitHubRepositoryEndpoint({required final String api}) {
-  revisionTool(api: 'meetrevision/revision-tool'),
-  cabPackages(api: 'meetrevision/packages');
-
+  cabPackages(api: 'meetrevision/packages'),
 }
 
 abstract final class NetworkEndpoints() {

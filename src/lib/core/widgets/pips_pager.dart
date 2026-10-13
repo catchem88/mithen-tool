@@ -28,31 +28,41 @@ enum PipsPagerButtonVisibility() {
 /// - Navigation buttons can be configured to auto-hide at boundaries.
 /// - Pips scroll when exceeding [maxVisiblePips] (default: 5).
 class const PipsPager({
-    super.key,
-    /// Height of the page area.
+  super.key,
+
+  /// Height of the page area.
   required final double itemExtent,
-    /// Pages to show.
+
+  /// Pages to show.
   required final List<Widget> children,
-    /// Optional external [PageController]. If not provided an internal one is used.
+
+  /// Optional external [PageController]. If not provided an internal one is used.
   final PageController? controller,
-    /// Visibility state of the previous button.
+
+  /// Visibility state of the previous button.
   final PipsPagerButtonVisibility previousButtonVisibility = .collapsed,
-    /// Visibility state of the next button.
+
+  /// Visibility state of the next button.
   final PipsPagerButtonVisibility nextButtonVisibility = .collapsed,
-    /// Maximum number of visible pips. If [children.length] > this, pips scroll
+
+  /// Maximum number of visible pips. If [children.length] > this, pips scroll
   /// to center the current page. Default is 5.
   final int maxVisiblePips = 5,
-    /// Whether to show the pips indicator below the page area.
+
+  /// Whether to show the pips indicator below the page area.
   final bool showIndicator = true,
-    /// Whether the pager is enabled. When false, pips are visible but not
+
+  /// Whether the pager is enabled. When false, pips are visible but not
   /// interactive (page indicator only).
   final bool enabled = true,
-    /// Whether the first and last pages are padded to center in the viewport.
+
+  /// Whether the first and last pages are padded to center in the viewport.
   /// Set to false to avoid extra horizontal space with viewportFraction.
   final bool padEnds = true,
-    /// Called when the page changes.
+
+  /// Called when the page changes.
   final ValueChanged<int>? onPageChanged,
-  }) extends StatefulWidget {
+}) extends StatefulWidget {
   @override
   State<PipsPager> createState() => _PipsPagerState();
 }
@@ -232,12 +242,12 @@ class _PipsPagerState() extends State<PipsPager> {
 
 /// Isolated navigation button widget to prevent parent rebuilds on hover.
 class const _NavButton({
-    required final IconData icon,
-    required final VoidCallback? onPressed,
-    required final PipsPagerButtonVisibility visibility,
-    required final bool parentHovered,
-    required final String semanticLabel,
-  }) extends StatelessWidget {
+  required final IconData icon,
+  required final VoidCallback? onPressed,
+  required final PipsPagerButtonVisibility visibility,
+  required final bool parentHovered,
+  required final String semanticLabel,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool shouldShow =

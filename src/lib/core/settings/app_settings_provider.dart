@@ -16,7 +16,7 @@ part 'app_settings_provider.g.dart';
 
 enum NavigationIndicators() {
   sticky,
-  end
+  end,
 }
 
 @Riverpod(keepAlive: true)
@@ -217,7 +217,7 @@ class SettingsService._() {
   static void updateThemeMode(ThemeMode theme) {
     WinRegistryService.writeRegistryValue(
       LOCAL_MACHINE,
-      r'SOFTWARE\Revision\Revision Tool',
+      r'SOFTWARE\Mithen\Mithen-Tool',
       'ThemeMode',
       theme.name,
     );

@@ -1,0 +1,12 @@
+*.exe
+.vscode
+.code-workspace
+*.code-workspace
+.ai/
+.qm/
+.kilo/
+.commandcode/
+res/*
+/revitool_native.dll
+/CodeDependencies.iss
+/InnoDependencyInstaller/

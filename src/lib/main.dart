@@ -43,7 +43,7 @@ Future<void> main(List<String> args) async {
     return true;
   };
 
-  logger.i('$tag Revision Tool GUI is starting');
+  logger.i('$tag MithenTool GUI is starting');
   await WinRegistryService.initialize();
   try {
     logger.i('$tag Initializing TrustedInstaller service');
@@ -52,37 +52,36 @@ Future<void> main(List<String> args) async {
     logger.w('$tag Failed to initialize TrustedInstaller: $e');
   }
 
-  if (WinRegistryService.isSupported) {
-    _isSupported = true;
-    logger.i('$tag supported=$_isSupported');
+  logger.i('$tag supported=${WinRegistryService.isSupported}');
+  if (!WinRegistryService.isSupported) {
+    logger.w(
+      '$tag Unsupported build detected. MithenTool is made for MithenOS - '
+      'continuing, but some features may not work on this Windows installation',
+    );
   }
 
   if (args.isNotEmpty && args[0].startsWith('--route=')) {
     initialRoute = args[0].replaceFirst('--route=', '');
   }
 
-  if (WinRegistryService.readString(
-        LOCAL_MACHINE,
-        r'SOFTWARE\Revision\Revision Tool',
-        'ThemeMode',
-      ) ==
+  if (WinRegistryService.readString(LOCAL_MACHINE, r'SOFTWARE\Mithen\Mithen-Tool', 'ThemeMode') ==
       null) {
-    logger.i('$tag Initializing Revision registry keys');
+    logger.i('$tag Initializing Mithen registry keys');
     await WinRegistryService.writeRegistryValue(
       LOCAL_MACHINE,
-      r'SOFTWARE\Revision\Revision Tool',
+      r'SOFTWARE\Mithen\Mithen-Tool',
       'ThemeMode',
       ThemeMode.system.name,
     );
     await WinRegistryService.writeRegistryValue(
       LOCAL_MACHINE,
-      r'SOFTWARE\Revision\Revision Tool',
+      r'SOFTWARE\Mithen\Mithen-Tool',
       'Experimental',
       0,
     );
     await WinRegistryService.writeRegistryValue(
       LOCAL_MACHINE,
-      r'SOFTWARE\Revision\Revision Tool',
+      r'SOFTWARE\Mithen\Mithen-Tool',
       'Language',
       AppLocale.en.name,
     );
@@ -104,7 +103,7 @@ Future<void> main(List<String> args) async {
 
   logger.i('$tag Initializing WindowPlus');
   await WindowPlus.ensureInitialized(
-    application: 'revision-tool',
+    application: 'mithen-tool',
     enableCustomFrame: true,
     enableEventStreams: false,
   );
@@ -121,8 +120,6 @@ Future<void> main(List<String> args) async {
   );
 }
 
-bool _isSupported = false;
-
 class const MyApp({super.key}) extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -136,7 +133,7 @@ class const MyApp({super.key}) extends ConsumerWidget {
 
         return FluentApp.router(
           routerConfig: ref.read(appRouterProvider),
-          title: 'Revision Tool',
+          title: 'MithenTool',
           debugShowCheckedModeBanner: false,
           locale: TranslationProvider.of(context).flutterLocale,
           supportedLocales: AppLocaleUtils.supportedLocales,

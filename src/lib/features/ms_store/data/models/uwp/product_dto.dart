@@ -35,7 +35,7 @@ enum SkuType({required final String value}) {
   enterpriseoffline(value: 'enterpriseoffline'),
   preinstall(value: 'preinstall'),
   full(value: 'full'),
-  trial(value: 'trial');
+  trial(value: 'trial'),
 }
 
 @freezed

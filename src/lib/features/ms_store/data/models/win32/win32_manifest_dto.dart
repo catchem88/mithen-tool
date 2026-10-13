@@ -23,8 +23,9 @@ sealed class Data with _$Data {
 
 @freezed
 sealed class Versions with _$Versions {
-  const factory({@JsonKey(name: 'Installers') @Default(IListConst([])) IList<Installers> installers}) =
-      _Versions;
+  const factory({
+    @JsonKey(name: 'Installers') @Default(IListConst([])) IList<Installers> installers,
+  }) = _Versions;
 
   factory fromJson(Map<String, Object?> json) => _$VersionsFromJson(json);
 }

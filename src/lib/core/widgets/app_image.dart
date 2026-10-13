@@ -5,17 +5,17 @@ import 'package:fluent_ui/fluent_ui.dart';
 import '../../features/ms_store/presentation/providers/ms_store_image_provider.dart';
 
 class const AppImage({
-    super.key,
-    required final String baseUrl,
-    final BoxFit fit = .cover,
-    final Alignment alignment = .center,
-    final BorderRadiusGeometry? borderRadius,
-    final Clip clipBehavior = .hardEdge,
-    final int fetchPadding = 100,
-    final Color? placeholderColor,
-    final Widget? loadingWidget,
-    final Widget? errorWidget,
-  }) extends StatelessWidget {
+  super.key,
+  required final String baseUrl,
+  final BoxFit fit = .cover,
+  final Alignment alignment = .center,
+  final BorderRadiusGeometry? borderRadius,
+  final Clip clipBehavior = .hardEdge,
+  final int fetchPadding = 100,
+  final Color? placeholderColor,
+  final Widget? loadingWidget,
+  final Widget? errorWidget,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget image = LayoutBuilder(

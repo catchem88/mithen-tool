@@ -108,7 +108,10 @@ final class const WinPackageRepositoryImpl({required final ApiCabDataSource api}
         packageRoot.close();
       }
     } catch (e) {
-      logger.d('CBS registry lookup unavailable for ${type.packageName}, falling back to DISM', error: e);
+      logger.d(
+        'CBS registry lookup unavailable for ${type.packageName}, falling back to DISM',
+        error: e,
+      );
     }
 
     // Fallback: query via DISM PowerShell if registry yields no results

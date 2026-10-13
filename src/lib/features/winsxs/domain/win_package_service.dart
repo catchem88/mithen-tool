@@ -30,7 +30,7 @@ abstract base class const WinPackageService({
   required final WinPackageType _type,
   required final WinPackageRepository _repository,
 }) with BaseService {
-  static final String cabPath = p.join(Directory.systemTemp.path, 'Revision-Tool', 'CAB');
+  static final String cabPath = p.join(Directory.systemTemp.path, 'Mithen-Tool', 'CAB');
 
   /// Enhanced key usage expected on CAB signer certificates.
   static const _systemComponentVerificationOid = '1.3.6.1.4.1.311.10.3.6';
@@ -201,7 +201,7 @@ abstract base class const WinPackageService({
           _repository.deleteTempPackage(package.path);
         } catch (retryError) {
           throw WinSxSPackageUninstallException(
-            'Failed to uninstall ${_type.packageName} after recovery attempt. Contact support at https://revi.cc/.',
+            'Failed to uninstall ${_type.packageName} after recovery attempt. Contact support at https://github.com/catchem88/mithen-os.',
             'Original error: $error; Retry error: $retryError',
           );
         }

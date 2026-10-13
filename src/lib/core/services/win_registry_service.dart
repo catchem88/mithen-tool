@@ -61,24 +61,31 @@ abstract class const WinRegistryService._private() {
   static final bool isIntelCpu = _cpuVendorIdentifier.contains('intel');
   static final bool isAmdCpu = _cpuVendorIdentifier.contains('amd');
 
-  static final bool isAmePlaybook = Directory(
-    '${Directory.systemTemp.path}\\AME\\Playbooks\\Revision-ReviOS',
-  ).existsSync();
+  static final bool isAmePlaybook = () {
+    final playbooks = Directory('${Directory.systemTemp.path}AMEPlaybooks');
+    if (!playbooks.existsSync()) return false;
+    return playbooks.listSync().any(
+      (entity) =>
+          entity is Directory &&
+          (entity.path.contains('Mithen') || entity.path.contains('Revision-ReviOS')),
+    );
+  }();
 
   static bool get isSupported {
+    final String? subVersion = readString(
+      LOCAL_MACHINE,
+      r'SOFTWARE\Microsoft\Windows NT\CurrentVersion',
+      'EditionSubVersion',
+    );
+    final String? subManufacturer = readString(
+      LOCAL_MACHINE,
+      r'SOFTWARE\Microsoft\Windows NT\CurrentVersion',
+      'EditionSubManufacturer',
+    );
     return _validate() ||
-        readString(
-              LOCAL_MACHINE,
-              r'SOFTWARE\Microsoft\Windows NT\CurrentVersion',
-              'EditionSubVersion',
-            ) ==
-            'ReviOS' ||
-        readString(
-              LOCAL_MACHINE,
-              r'SOFTWARE\Microsoft\Windows NT\CurrentVersion',
-              'EditionSubManufacturer',
-            ) ==
-            'MeetRevision';
+        subVersion == 'MithenOS' ||
+        subVersion == 'ReviOS' ||
+        subManufacturer == 'Mithen';
   }
 
   static bool _validate() {
@@ -90,7 +97,7 @@ abstract class const WinRegistryService._private() {
       return key.keys.lastWhere((element) => element.startsWith('Revision-ReviOS')).isNotEmpty;
     } catch (e) {
       if (!isAmePlaybook) {
-        logger.w('Error validating ReviOS');
+        logger.w('Error validating MithenOS');
       }
       return false;
     } finally {
@@ -193,7 +200,7 @@ abstract class const WinRegistryService._private() {
   }
 
   static String? get themeModeReg =>
-      readString(LOCAL_MACHINE, r'SOFTWARE\Revision\Revision Tool', 'ThemeMode');
+      readString(LOCAL_MACHINE, r'SOFTWARE\Mithen\Mithen-Tool', 'ThemeMode');
 
   static bool get themeTransparencyEffect =>
       readInt(

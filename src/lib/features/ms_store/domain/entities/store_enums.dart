@@ -15,7 +15,7 @@ enum StoreRing({required final String value, required final String label}) {
   retail(value: 'Retail', label: 'Retail (Base)'),
   releasePreview(value: 'RP', label: 'Release Preview'),
   insiderSlow(value: 'WIS', label: 'Insider Slow'),
-  insiderFast(value: 'WIF', label: 'Insider Fast');
+  insiderFast(value: 'WIF', label: 'Insider Fast'),
 }
 
 /// CPU architecture for package filtering
@@ -23,5 +23,5 @@ enum StoreArch({required final String value, required final String label}) {
   auto(value: 'auto', label: 'Auto-detect'),
   x64(value: 'x64', label: 'x64'),
   arm64(value: 'arm64', label: 'ARM64'),
-  all(value: 'all', label: 'All architectures');
+  all(value: 'all', label: 'All architectures'),
 }

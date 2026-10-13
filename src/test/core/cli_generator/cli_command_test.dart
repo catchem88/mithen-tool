@@ -1,5 +1,6 @@
 import 'package:args/command_runner.dart';
 import 'package:flutter_test/flutter_test.dart';
+
 import 'test_service.dart';
 
 void main() {
@@ -20,13 +21,13 @@ void main() {
     });
 
     test('runs enum status with valid target', () async {
-      final runner = CommandRunner<void>('revitool', 'test')
+      final runner = CommandRunner<void>('mithentool', 'test')
         ..addCommand(TestServiceCliCommand(service));
       await runner.run(['test', 'mode', 'status', 'alpha']);
     });
 
     test('rejects enum status with invalid target', () async {
-      final runner = CommandRunner<void>('revitool', 'test')
+      final runner = CommandRunner<void>('mithentool', 'test')
         ..addCommand(TestServiceCliCommand(service));
       expect(
         () => runner.run(['test', 'mode', 'status', 'not-a-valid-target']),

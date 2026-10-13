@@ -1,10 +1,10 @@
 class const KGLModel({
-    required final String uri,
-    required final String hash,
-    required final int version,
-    required final int activateOnUpdate,
-    required final int versionCheckTimeout,
-  }) {
+  required final String uri,
+  required final String hash,
+  required final int version,
+  required final int activateOnUpdate,
+  required final int versionCheckTimeout,
+}) {
   factory fromJson(Map<String, dynamic> json) {
     return KGLModel(
       uri: json['URI'] as String,

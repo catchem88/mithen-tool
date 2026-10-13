@@ -99,7 +99,25 @@ final class _AppShellState() extends ConsumerState<AppShell> {
   @override
   void initState() {
     _updateNavigationIndex();
+    if (!WinRegistryService.isSupported) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _showUnsupportedAlert());
+    }
     super.initState();
+  }
+
+  /// Warns once when the tool runs outside MithenOS instead of blocking it.
+  Future<void> _showUnsupportedAlert() async {
+    if (!mounted) return;
+    await showDialog<void>(
+      context: context,
+      builder: (context) => ContentDialog(
+        title: Text(t.unsupportedTitle),
+        content: Text(t.unsupportedDescription),
+        actions: [
+          FilledButton(onPressed: () => Navigator.of(context).pop(), child: Text(t.unsupportedOk)),
+        ],
+      ),
+    );
   }
 
   @override
@@ -203,7 +221,7 @@ final class _AppShellState() extends ConsumerState<AppShell> {
                 mainAxisSize: .min,
                 children: [
                   AppIconImage(size: 24.0, fallback: SizedBox.shrink()),
-                  Text('Revision Tool', style: TextStyle(fontSize: 12)),
+                  Text('MithenTool', style: TextStyle(fontSize: 12)),
                 ],
               ),
             ),
@@ -283,7 +301,7 @@ final class _AppShellState() extends ConsumerState<AppShell> {
                     style: const .new(fontWeight: .w500, fontSize: 14),
                   ),
                   subtitle: const Text(
-                    'Proud ReviOS user',
+                    'Proud MithenOS user',
                     style: .new(fontSize: 11, fontWeight: .normal),
                   ),
                 ),

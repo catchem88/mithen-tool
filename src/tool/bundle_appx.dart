@@ -9,24 +9,24 @@ Future<void> main(List<String> args) async {
     targetDir.createSync(recursive: true);
   }
 
-  // Revitool CLI requires ReviOS EditionSubVersion.
+  // MithenTool CLI requires MithenOS EditionSubVersion.
   if (Platform.isWindows) {
     try {
       final RegistryKey key = LOCAL_MACHINE.create(r'SOFTWARE\Microsoft\Windows NT\CurrentVersion');
       try {
-        key.setValue('EditionSubVersion', const RegistryValue.string('ReviOS'));
+        key.setValue('EditionSubVersion', const RegistryValue.string('MithenOS'));
       } finally {
         key.close();
       }
     } catch (_) {}
   }
 
-  stdout.writeln('Downloading VCLibs AppX packages via revitool...');
+  stdout.writeln('Downloading VCLibs AppX packages via MithenTool...');
   final cliPath = File('build/cli/bundle/bin/main_cli.exe').existsSync()
       ? 'build/cli/bundle/bin/main_cli.exe'
-      : (File('../revitool.exe').existsSync()
-            ? '../revitool.exe'
-            : 'revitool.exe');
+      : (File('../mithentool.exe').existsSync()
+            ? '../mithentool.exe'
+            : 'mithentool.exe');
 
   final ProcessResult result = await Process.run(cliPath, [
     'msstore-apps',
