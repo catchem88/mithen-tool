@@ -33,6 +33,8 @@ MithenTool is a lightweight companion tool for <a href="https://github.com/catch
 * No background service. Closed when it's closed.
 * Every change it makes is backed up and reversible
 * Prioritizing user-ergonomics
+## Support and Sponsor the OG creator!
+[Revision Tool](https://github.com/meetrevision/revision-tool)
 ## Credits
 * [meetrevision](https://github.com/meetrevision) - authors of the [Revision Tool](https://github.com/meetrevision/revision-tool) that MithenTool is based on.
 * [AME](https://ameliorated.io) - the playbook format and wizard MithenOS builds on.
