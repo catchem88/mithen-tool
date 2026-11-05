@@ -39,7 +39,7 @@ Future<void> main(List<String> args) async {
   final runner =
       CommandRunner<void>(
           'mithentool',
-          "MithenTool CLI v${const String.fromEnvironment('APP_VERSION', defaultValue: '1.0.0')}",
+          "MithenTool CLI v${const String.fromEnvironment('APP_VERSION', defaultValue: '1.1.1')}",
         )
         ..addCommand(AppxCommand(container: container))
         ..addCommand(MSStoreCommand(service: container.read(storeServiceProvider)))

@@ -112,7 +112,7 @@ class const _LanguageCard() extends ConsumerWidget {
 }
 
 class const _AboutCard() extends StatelessWidget {
-  static const _appVersion = String.fromEnvironment('APP_VERSION', defaultValue: '1.0.0');
+  static const _appVersion = String.fromEnvironment('APP_VERSION', defaultValue: '1.1.1');
 
   @override
   Widget build(BuildContext context) {

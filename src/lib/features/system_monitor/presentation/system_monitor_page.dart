@@ -72,12 +72,17 @@ class _SystemMonitorPageState() extends ConsumerState<SystemMonitorPage> {
     });
   }
 
-  /// Fixes every drifted item that can be fixed automatically, one by one.
-  Future<void> _fixAll(MonitorReport report) async {
+  /// Fixes every drifted item in [results] that can be fixed automatically.
+  ///
+  /// Items already in the expected state are skipped, so this only acts on
+  /// what actually drifted.
+  Future<void> _fixAll(Iterable<MonitorResult> results) async {
+    final List<MonitorResult> drifted = results
+        .where((MonitorResult result) => !result.ok && result.item.autoFix)
+        .toList(growable: false);
+    if (drifted.isEmpty) return;
+
     await _withLoading(t.systemMonitorFixAll, t.systemMonitorFixing, () async {
-      final List<MonitorResult> drifted = report.results
-          .where((MonitorResult result) => !result.ok && result.item.autoFix)
-          .toList(growable: false);
       for (final result in drifted) {
         try {
           await ref
@@ -130,7 +135,7 @@ class _SystemMonitorPageState() extends ConsumerState<SystemMonitorPage> {
           FilledButton(
             onPressed: _busy || report.isLoading || fixable == 0
                 ? null
-                : () => _fixAll(report.requireValue),
+                : () => _fixAll(report.requireValue.results),
             child: Text(t.systemMonitorFixAll),
           ),
         ],
@@ -149,11 +154,18 @@ class _SystemMonitorPageState() extends ConsumerState<SystemMonitorPage> {
       if (results.isEmpty) continue;
 
       final int ok = results.where((MonitorResult result) => result.ok).length;
+      final List<MonitorResult> drifted = results
+          .where((MonitorResult result) => !result.ok && result.item.autoFix)
+          .toList(growable: false);
       cards.add(
         CardHighlight(
           icon: _kindIcon(kind),
           label: _kindLabel(kind),
           description: '$ok/${results.length}',
+          action: FilledButton(
+            onPressed: _busy || drifted.isEmpty ? null : () => _fixAll(drifted),
+            child: Text(t.systemMonitorFixAll),
+          ),
           children: [for (final MonitorResult result in results) _row(result)],
         ),
       );
@@ -190,6 +202,7 @@ class _SystemMonitorPageState() extends ConsumerState<SystemMonitorPage> {
     MonitorCheckKind.appx => msicons.FluentIcons.apps_20_regular,
     MonitorCheckKind.service => msicons.FluentIcons.settings_20_regular,
     MonitorCheckKind.feature => msicons.FluentIcons.window_20_regular,
+    MonitorCheckKind.package => msicons.FluentIcons.box_20_regular,
     MonitorCheckKind.task => msicons.FluentIcons.clock_20_regular,
     MonitorCheckKind.registry => msicons.FluentIcons.database_20_regular,
     MonitorCheckKind.hosts => msicons.FluentIcons.globe_20_regular,
@@ -199,6 +212,7 @@ class _SystemMonitorPageState() extends ConsumerState<SystemMonitorPage> {
     MonitorCheckKind.appx => t.systemMonitorKindAppx,
     MonitorCheckKind.service => t.systemMonitorKindService,
     MonitorCheckKind.feature => t.systemMonitorKindFeature,
+    MonitorCheckKind.package => t.systemMonitorKindPackage,
     MonitorCheckKind.task => t.systemMonitorKindTask,
     MonitorCheckKind.registry => t.systemMonitorKindRegistry,
     MonitorCheckKind.hosts => t.systemMonitorKindHosts,

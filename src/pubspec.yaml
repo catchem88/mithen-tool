@@ -3,7 +3,7 @@ description: A tool to personalize MithenOS to your needs
 publish_to: "none"
 
 # The version number defaults to 1.0.0 for easier development and is incremented by the build flags based on the tag
-version: 1.0.0+1
+version: 1.1.1+1
 
 environment:
   sdk: ^3.13.2

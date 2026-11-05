@@ -16,12 +16,13 @@ final class const SystemMonitorRepository() {
   Future<MonitorReport> scan() async {
     final Set<String> families = await _installedAppxFamilies();
     final Map<String, String> features = await _featureStates();
+    final Set<String> packages = await _installedPackages();
     final Map<String, String> tasks = await _taskStates();
     final String hosts = await _readHosts();
 
     final List<MonitorResult> results = [];
     for (final MonitorItem item in systemMonitorManifest) {
-      results.add(_evaluate(item, families, features, tasks, hosts));
+      results.add(_evaluate(item, families, features, packages, tasks, hosts));
     }
     return MonitorReport(results: results, scannedAt: DateTime.now());
   }
@@ -49,6 +50,16 @@ final class const SystemMonitorRepository() {
         final verb = item.expected == MonitorExpected.enabled ? 'Enable' : 'Disable';
         await _runPSStrict(
           '$verb-WindowsOptionalFeature -Online -FeatureName ${item.name} -NoRestart -ErrorAction Stop',
+        );
+      case MonitorCheckKind.package:
+        // Feature-on-Demand packages are removed by full package name; wrapper
+        // stubs are not removable on their own.
+        await _runPSStrict(
+          'Get-WindowsPackage -Online -ErrorAction SilentlyContinue | '
+          "Where-Object { \$_.PackageName -like '${item.name}*' -and "
+          r"$_.PackageState -eq 'Installed' -and $_.PackageName -notlike '*-Wrapper*' } | "
+          r'ForEach-Object { Remove-WindowsPackage -Online -PackageName $_.PackageName '
+          r'-NoRestart -ErrorAction SilentlyContinue }',
         );
       case MonitorCheckKind.task:
         final String taskPath = _normalizeTaskPath(item.taskPath);
@@ -88,11 +99,12 @@ final class const SystemMonitorRepository() {
     MonitorItem item,
     Set<String> families,
     Map<String, String> features,
+    Set<String> packages,
     Map<String, String> tasks,
     String hosts,
   ) {
     try {
-      final String? actual = _actualState(item, families, features, tasks, hosts);
+      final String? actual = _actualState(item, families, features, packages, tasks, hosts);
       return MonitorResult(item: item, ok: _isExpected(item, actual), actual: actual);
     } catch (error) {
       return MonitorResult(item: item, ok: false, error: error.toString());
@@ -103,6 +115,7 @@ final class const SystemMonitorRepository() {
     MonitorItem item,
     Set<String> families,
     Map<String, String> features,
+    Set<String> packages,
     Map<String, String> tasks,
     String hosts,
   ) {
@@ -119,6 +132,10 @@ final class const SystemMonitorRepository() {
         )?.toString();
       case MonitorCheckKind.feature:
         return features[item.name] ?? 'absent';
+      case MonitorCheckKind.package:
+        final String needle = item.name.toLowerCase();
+        final Iterable<String> matches = packages.where((p) => p.toLowerCase().startsWith(needle));
+        return matches.isEmpty ? null : matches.first;
       case MonitorCheckKind.task:
         final String state = tasks[item.name] ?? '';
         return state.isEmpty ? 'absent' : state;
@@ -163,6 +180,18 @@ final class const SystemMonitorRepository() {
   Future<Set<String>> _installedAppxFamilies() async {
     final String output = await _runPS(
       r'(Get-AppxPackage -AllUsers -ErrorAction SilentlyContinue).PackageFamilyName',
+    );
+    return output
+        .split(RegExp(r'\r?\n'))
+        .map((line) => line.trim())
+        .where((line) => line.isNotEmpty)
+        .toSet();
+  }
+
+  Future<Set<String>> _installedPackages() async {
+    final String output = await _runPS(
+      r'(Get-WindowsPackage -Online -ErrorAction SilentlyContinue | '
+      r"Where-Object { $_.PackageState -eq 'Installed' }).PackageName",
     );
     return output
         .split(RegExp(r'\r?\n'))

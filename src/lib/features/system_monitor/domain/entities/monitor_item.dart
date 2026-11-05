@@ -3,6 +3,9 @@ enum MonitorCheckKind() {
   appx,
   service,
   feature,
+
+  /// A Windows Feature-on-Demand package, checked through `Get-WindowsPackage`.
+  package,
   task,
   registry,
   hosts,
@@ -79,6 +82,8 @@ final class const MonitorItem({
         }}';
       case MonitorCheckKind.feature:
         return expected == MonitorExpected.enabled ? 'Enable $name' : 'Disable $name';
+      case MonitorCheckKind.package:
+        return 'Remove package $name';
       case MonitorCheckKind.task:
         return expected == MonitorExpected.disabled ? 'Disable $name' : 'Enable $name';
       case MonitorCheckKind.registry:

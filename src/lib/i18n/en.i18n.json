@@ -205,6 +205,7 @@
     "systemMonitorKindAppx": "Apps",
     "systemMonitorKindService": "Services",
     "systemMonitorKindFeature": "Windows features",
+    "systemMonitorKindPackage": "Packages",
     "systemMonitorKindTask": "Scheduled tasks",
     "systemMonitorKindRegistry": "Registry",
     "systemMonitorKindHosts": "Hosts",
