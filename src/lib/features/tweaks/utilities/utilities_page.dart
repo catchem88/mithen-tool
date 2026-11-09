@@ -21,7 +21,9 @@ class const UtilitiesPage({super.key}) extends ConsumerWidget {
         const _HibernationCard(),
         if (hibernationStatus || kDebugMode) const _FastStartupCard(),
         const _ModernStandbyCard(),
+        const _StandbyNetworkCard(),
         const _TMMonitoringCard(),
+        const _OpenInTerminalCard(),
         // const _MPOCard(),
         const _UsageReportingCard(),
       ].withSpacing(5),
@@ -93,6 +95,52 @@ class const _ModernStandbyCard() extends ConsumerWidget {
         },
       ),
       children: [CardListTile(title: t.tweaksUtilitiesModernStandbyFullDescription)],
+    );
+  }
+}
+
+class const _StandbyNetworkCard() extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final bool status = ref.watch(standbyNetworkStatusProvider);
+
+    return CardHighlight(
+      icon: msicons.FluentIcons.wifi_off_20_regular,
+      label: t.tweaksUtilitiesStandbyNetwork,
+      description: t.tweaksUtilitiesStandbyNetworkDescription,
+      action: CardToggleSwitch(
+        value: !status,
+        onChanged: (value) async {
+          value
+              ? await ref.read(utilitiesServiceProvider).disableStandbyNetwork()
+              : await ref.read(utilitiesServiceProvider).enableStandbyNetwork();
+          ref.invalidate(standbyNetworkStatusProvider);
+        },
+      ),
+      children: [CardListTile(title: t.tweaksUtilitiesStandbyNetworkFullDescription)],
+    );
+  }
+}
+
+class const _OpenInTerminalCard() extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final bool status = ref.watch(openInTerminalAdminStatusProvider);
+
+    return CardHighlight(
+      icon: msicons.FluentIcons.window_console_20_regular,
+      label: t.tweaksUtilitiesOpenInTerminal,
+      description: t.tweaksUtilitiesOpenInTerminalDescription,
+      action: CardToggleSwitch(
+        value: status,
+        requiresRestart: true,
+        onChanged: (value) async {
+          value
+              ? await ref.read(utilitiesServiceProvider).enableOpenInTerminalAdmin()
+              : await ref.read(utilitiesServiceProvider).disableOpenInTerminalAdmin();
+          ref.invalidate(openInTerminalAdminStatusProvider);
+        },
+      ),
     );
   }
 }

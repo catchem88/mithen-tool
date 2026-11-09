@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:win32_registry/win32_registry.dart';
 
@@ -50,6 +52,26 @@ abstract class UtilitiesService() {
   Future<void> disableTMMonitoring();
 
   @CliToggle(
+    name: 'standby-network',
+    status: 'statusStandbyNetwork',
+    enable: 'enableStandbyNetwork',
+    disable: 'disableStandbyNetwork',
+  )
+  bool get statusStandbyNetwork;
+  Future<void> enableStandbyNetwork();
+  Future<void> disableStandbyNetwork();
+
+  @CliToggle(
+    name: 'open-in-terminal-admin',
+    status: 'statusOpenInTerminalAdmin',
+    enable: 'enableOpenInTerminalAdmin',
+    disable: 'disableOpenInTerminalAdmin',
+  )
+  bool get statusOpenInTerminalAdmin;
+  Future<void> enableOpenInTerminalAdmin();
+  Future<void> disableOpenInTerminalAdmin();
+
+  @CliToggle(
     name: 'usage-reporting',
     status: 'statusUsageReporting',
     enable: 'enableUsageReporting',
@@ -61,6 +83,47 @@ abstract class UtilitiesService() {
 }
 
 class const UtilitiesServiceImpl() implements UtilitiesService {
+  static const String _standbyNetworkPolicy =
+      r'SOFTWARE\Policies\Microsoft\Power\PowerSettings\f15576e8-98b7-4186-b944-eafa664402d9';
+  static const String _terminalAdminVerb =
+      r'SOFTWARE\Classes\Directory\shell\OpenWTHereAsAdmin';
+  static const String _terminalBackgroundAdminVerb =
+      r'SOFTWARE\Classes\Directory\Background\shell\OpenWTHereAsAdmin';
+  static const List<String> _terminalAdminVerbs = [
+    _terminalAdminVerb,
+    _terminalBackgroundAdminVerb,
+  ];
+  static const String _terminalAdminPowerShellCommand =
+      r'''powershell.exe -WindowStyle Hidden "Start-Process -Verb RunAs powershell.exe -WorkingDirectory '%V\.'"''';
+
+  /// Builds the elevated command for an installed Windows Terminal.
+  ///
+  /// The full package path is used instead of the `wt.exe` app execution alias:
+  /// aliases are not resolvable from an elevated process, which makes
+  /// `start wt.exe` fail with "Windows cannot find 'wt.exe'".
+  static String _elevatedTerminalCommand(String wtPath) {
+    return '''powershell.exe -WindowStyle Hidden "Start-Process -Verb RunAs -FilePath '$wtPath' -WorkingDirectory '%V\\.'"''';
+  }
+
+  /// Path to the installed Windows Terminal executable, or null when absent.
+  static Future<String?> _windowsTerminalPath() async {
+    final ProcessResult result = await runPSCommand(
+      r'$pkg = Get-AppxPackage -Name Microsoft.WindowsTerminal -ErrorAction SilentlyContinue | '
+      r'Select-Object -First 1; if ($pkg) { Join-Path $pkg.InstallLocation "wt.exe" }',
+      stdout: true,
+      loggerInfoOutput: false,
+    );
+    final String path = result.stdout.toString().trim();
+    if (path.isEmpty || !File(path).existsSync()) return null;
+    return path;
+  }
+
+  /// Whether either power source refuses network connectivity during standby.
+  static bool _isStandbyNetworkDisabled(BaseRegistryKey hive) {
+    return WinRegistryService.readInt(hive, _standbyNetworkPolicy, 'ACSettingIndex') == 0 ||
+        WinRegistryService.readInt(hive, _standbyNetworkPolicy, 'DCSettingIndex') == 0;
+  }
+
   @override
   bool get statusHibernation {
     return WinRegistryService.readInt(
@@ -201,6 +264,69 @@ powercfg -h off
       'PlatformAoAcOverride',
       0,
     );
+  }
+
+  @override
+  bool get statusStandbyNetwork {
+    return !_isStandbyNetworkDisabled(LOCAL_MACHINE) && !_isStandbyNetworkDisabled(CURRENT_USER);
+  }
+
+  @override
+  Future<void> enableStandbyNetwork() async {
+    await Future.wait([
+      for (final BaseRegistryKey hive in [LOCAL_MACHINE, CURRENT_USER]) ...[
+        WinRegistryService.deleteValue(hive, _standbyNetworkPolicy, 'ACSettingIndex'),
+        WinRegistryService.deleteValue(hive, _standbyNetworkPolicy, 'DCSettingIndex'),
+      ],
+    ]);
+  }
+
+  @override
+  Future<void> disableStandbyNetwork() async {
+    await Future.wait([
+      for (final BaseRegistryKey hive in [LOCAL_MACHINE, CURRENT_USER]) ...[
+        WinRegistryService.writeRegistryValue(hive, _standbyNetworkPolicy, 'ACSettingIndex', 0),
+        WinRegistryService.writeRegistryValue(hive, _standbyNetworkPolicy, 'DCSettingIndex', 0),
+      ],
+    ]);
+  }
+
+  @override
+  bool get statusOpenInTerminalAdmin {
+    return WinRegistryService.readString(
+          LOCAL_MACHINE,
+          '$_terminalAdminVerb\\command',
+          '',
+        ) !=
+        null;
+  }
+
+  @override
+  Future<void> enableOpenInTerminalAdmin() async {
+    final String? wtPath = await _windowsTerminalPath();
+    final String command = wtPath == null
+        ? _terminalAdminPowerShellCommand
+        : _elevatedTerminalCommand(wtPath);
+
+    for (final String verb in _terminalAdminVerbs) {
+      await WinRegistryService.writeRegistryValue(
+        LOCAL_MACHINE,
+        verb,
+        'MUIVerb',
+        'Open in Terminal (Admin)',
+      );
+      await WinRegistryService.writeRegistryValue(LOCAL_MACHINE, verb, 'HasLUAShield', '');
+      await WinRegistryService.deleteValue(LOCAL_MACHINE, verb, 'Extended');
+      await WinRegistryService.writeRegistryValue(LOCAL_MACHINE, '$verb\\command', '', command);
+    }
+  }
+
+  @override
+  Future<void> disableOpenInTerminalAdmin() async {
+    await Future.wait([
+      for (final String verb in _terminalAdminVerbs)
+        WinRegistryService.deleteKey(LOCAL_MACHINE, verb),
+    ]);
   }
 
   @override
@@ -398,6 +524,16 @@ bool statusModernStandbyStatus(Ref ref) {
 @riverpod
 bool tmMonitoringStatus(Ref ref) {
   return ref.watch(utilitiesServiceProvider).statusTMMonitoring;
+}
+
+@riverpod
+bool standbyNetworkStatus(Ref ref) {
+  return ref.watch(utilitiesServiceProvider).statusStandbyNetwork;
+}
+
+@riverpod
+bool openInTerminalAdminStatus(Ref ref) {
+  return ref.watch(utilitiesServiceProvider).statusOpenInTerminalAdmin;
 }
 
 @riverpod
