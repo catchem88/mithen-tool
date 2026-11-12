@@ -1,6 +1,16 @@
-# MithenTool v1.1.1
+# MithenTool v1.3.0
 
-Companion to MithenOS Playbook v1.1.1: the System Monitor now tracks everything the playbook removes, and can put a group back in order with one click.
+Companion to MithenOS Playbook v1.1.1: the System Monitor tracks everything the playbook removes, and a new page brings the Windhawk customizations without asking anyone to install Windhawk.
+
+## Windows customizations (new)
+
+A new sidebar entry **above Tweaks & Optimizations** with one toggle per Windhawk mod: classic context menu, taskbar classic context menu, classic Explorer navigation bar, legacy file copy, modern folder picker, taskbar height/icon size, Start menu without Recommended, pinned-only Start menu, empty notification center.
+
+- **Bundled engine + compiler, inside the MithenTool folder** (`windhawk-engine\`, no `Program Files\Windhawk`) - offline - MithenTool ships the Windhawk **2.0.0-alpha.7** engine (no UI; mods are compiled locally during setup so they match the installed Windows build). Setup deploys it headlessly: service registered, tray icon hidden, update check disabled, mods pre-registered disabled with the settings from the backup. No network access is used at install or at toggle time.
+- **Respects a real Windhawk** - if Windhawk is already installed (or shows up later), setup skips the deployment and the page says so instead of fighting your install. Nothing under `HKLM\SOFTWARE\Windhawk` is written in that case.
+- **No self-update** - the engine is pinned; there is no update action anywhere in the app.
+- **Clean uninstall** - removing MithenTool stops and deletes the engine service and clears the Windhawk registry keys and `%ProgramData%\Windhawk`, but only when the engine was ours.
+- **Repair** - if setup was interrupted, the page shows "Engine not registered" with a Repair button that re-runs the bundled deploy script.
 
 ## System Monitor
 

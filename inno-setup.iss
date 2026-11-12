@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "MithenTool"
-#define MyAppVersion "1.1.1"
+#define MyAppVersion "1.3.0"
 #define MyAppPublisher "Mithen"
 #define MyAppURL "https://github.com/catchem88/mithen-os"
 #define MyAppExeName "mithentoolw.exe"
@@ -31,7 +31,7 @@ UsePreviousAppDir=no
 OutputDir={#SourcePath}\res
 OutputBaseFilename=MithenTool-Setup
 SetupIconFile={#SourcePath}\src\windows\runner\resources\app_icon.ico
-Compression=zip
+Compression=lzma2/ultra64
 SolidCompression=yes
 UninstallDisplayIcon={app}\{#MyAppExeName}
 WizardStyle=modern
@@ -57,6 +57,11 @@ Source: "{#SourcePath}\src\build\windows\x64\runner\Release\data\*"; DestDir: "{
 ; FFI
 Source: "{#SourcePath}\native_utils\process_checker.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#SourcePath}\revitool_native.dll"; DestDir: "{app}"; Flags: ignoreversion
+; Windows customizations: bundled offline Windhawk engine, kept inside the
+; MithenTool folder (no Program Files\Windhawk, no own uninstall entry)
+Source: "{#SourcePath}\installer\deploy-windhawk.ps1"; DestDir: "{app}\windhawk"; Flags: ignoreversion
+Source: "{#SourcePath}\res\windhawk-payload\app\*"; DestDir: "{app}\windhawk-engine"; Flags: ignoreversion recursesubdirs createallsubdirs; Check: ShouldDeployWindhawk
+Source: "{#SourcePath}\res\windhawk-payload\appdata\*"; DestDir: "{commonappdata}\Windhawk"; Flags: ignoreversion recursesubdirs createallsubdirs; Check: ShouldDeployWindhawk
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
@@ -64,7 +69,11 @@ Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Run]
+Filename: "{sys}\WindowsPowerShell\v1.0\powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -File ""{app}\windhawk\deploy-windhawk.ps1"" -AppRoot ""{app}\windhawk-engine"" -SkipIfExternal"; StatusMsg: "Registering the Windows customizations engine (compiling mods)..."; Flags: runhidden waituntilterminated
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: runascurrentuser nowait postinstall skipifsilent
+
+[UninstallRun]
+Filename: "{sys}\WindowsPowerShell\v1.0\powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -File ""{app}\windhawk\deploy-windhawk.ps1"" -AppRoot ""{app}\windhawk-engine"" -Uninstall"; Flags: runhidden waituntilterminated; RunOnceId: "RemoveWindhawkEngine"
 
 [Registry]
 Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"; \
@@ -76,6 +85,39 @@ function InitializeSetup: Boolean;
 begin
   Dependency_AddVC2015To2022;
   Result := True;
+end;
+
+{ A genuine Windhawk always registers an uninstall entry. Our own payload
+  copies windhawk.exe without one, so the entry is the reliable signal. }
+function HasWindhawkUninstallEntry: Boolean;
+begin
+  Result := RegKeyExists(HKLM64, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Windhawk')
+    or RegKeyExists(HKLM32, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Windhawk');
+end;
+
+{ False only when the machine has a Windhawk we did not deploy. }
+function ShouldDeployWindhawk: Boolean;
+var
+  Sentinel: String;
+  HasSentinel: Boolean;
+begin
+  HasSentinel := RegQueryStringValue(HKLM64, 'SOFTWARE\MithenTool', 'WindhawkEngine', Sentinel)
+    or RegQueryStringValue(HKLM64, 'SOFTWARE\WOW6432Node\MithenTool', 'WindhawkEngine', Sentinel)
+    or RegQueryStringValue(HKLM32, 'SOFTWARE\MithenTool', 'WindhawkEngine', Sentinel);
+
+  if HasSentinel then
+  begin
+    if Sentinel = 'skipped-external' then
+    begin
+      { The user may have uninstalled their Windhawk since - take over then. }
+      Result := not HasWindhawkUninstallEntry;
+      exit;
+    end;
+    Result := True;
+    exit;
+  end;
+
+  Result := not HasWindhawkUninstallEntry;
 end;
 
 function NeedsAddPath(Param: string): Boolean;
@@ -124,6 +166,78 @@ begin
     RemovePath(ExpandConstant('{app}'));
 end;
 
+procedure KillImage(const ImageName: String);
+var
+  ResultCode: Integer;
+begin
+  Exec(ExpandConstant('{sys}\taskkill.exe'), '/F /IM ' + ImageName, '',
+    SW_HIDE, ewWaitUntilTerminated, ResultCode);
+end;
+
+function UniqueDir(const Base: String): String;
+var
+  I: Integer;
+begin
+  Result := Base;
+  I := 1;
+  while DirExists(Result) do
+  begin
+    Result := Base + '.' + IntToStr(I);
+    I := I + 1;
+  end;
+end;
+
+procedure MoveFolderAside(const SourceDir, TargetDir: String);
+var
+  ResultCode: Integer;
+begin
+  if not DirExists(SourceDir) then
+    Exit;
+  if not RenameFile(SourceDir, TargetDir) then
+    Exec(ExpandConstant('{cmd}'),
+      '/c move /Y "' + SourceDir + '" "' + TargetDir + '"', '',
+      SW_HIDE, ewWaitUntilTerminated, ResultCode);
+end;
+
+procedure PrepareForUpgrade();
+var
+  ResultCode: Integer;
+begin
+  // The Windhawk service keeps windhawk.exe/windhawk.dll open, and the
+  // injected engine DLL stays mapped in every process it attached to.
+  // Stop the service, close the apps, then move the old folders aside so
+  // Setup can write the new files. Running processes keep the renamed
+  // copies until they restart; a new engine uses the new folder.
+  Exec(ExpandConstant('{sys}\sc.exe'), 'stop Windhawk', '', SW_HIDE,
+    ewWaitUntilTerminated, ResultCode);
+  Sleep(2000);
+
+  KillImage('mithentoolw.exe');
+  KillImage('mithentool.exe');
+  KillImage('windhawk.exe');
+  KillImage('windhawk-cli.exe');
+  KillImage('windhawk-mod.exe');
+  KillImage('windhawk-mod-elevated.exe');
+  KillImage('windhawk-mod-uiaccess.exe');
+  KillImage('windhawk-x64-helper.exe');
+  Sleep(500);
+
+  MoveFolderAside(ExpandConstant('{app}\windhawk-engine'),
+    UniqueDir(ExpandConstant('{app}\windhawk-engine.old')));
+  MoveFolderAside(ExpandConstant('{commonappdata}\Windhawk\Engine\Mods'),
+    UniqueDir(ExpandConstant('{commonappdata}\Windhawk\Engine\Mods.old')));
+end;
+
+procedure CurStepChanged(CurStep: TSetupStep);
+begin
+  if CurStep = ssInstall then
+    PrepareForUpgrade();
+end;
+
 [InstallDelete]
 Type: filesandordirs; Name: "{app}\data\flutter_assets\additionals"
 Type: filesandordirs; Name: "{app}\data\flutter_assets\assets"
+
+[UninstallDelete]
+Type: filesandordirs; Name: "{app}\windhawk-engine.old*"
+Type: filesandordirs; Name: "{commonappdata}\Windhawk\Engine\Mods.old*"

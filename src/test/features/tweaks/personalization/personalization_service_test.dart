@@ -78,16 +78,16 @@ void main() {
       });
 
       group('New Context Menu', () {
-        test('statusNewContextMenu returns a boolean', () {
-          expect(service.statusNewContextMenu, isA<bool>());
+        test('statusClassicContextMenu returns a boolean', () {
+          expect(service.statusClassicContextMenu, isA<bool>());
         });
 
-        test('enableNewContextMenu completes without error', () async {
-          await expectLater(service.enableNewContextMenu(), completes);
+        test('enableClassicContextMenu completes without error', () async {
+          await expectLater(service.enableClassicContextMenu(), completes);
         });
 
-        test('disableNewContextMenu completes without error', () async {
-          await expectLater(service.disableNewContextMenu(), completes);
+        test('disableClassicContextMenu completes without error', () async {
+          await expectLater(service.disableClassicContextMenu(), completes);
         });
       });
 
@@ -173,7 +173,7 @@ void main() {
           expect(service.statusNotification, isA<NotificationMode>());
           expect(service.statusLegacyBalloon, isA<bool>());
           expect(service.statusScreenEdgeSwipe, isA<bool>());
-          expect(service.statusNewContextMenu, isA<bool>());
+          expect(service.statusClassicContextMenu, isA<bool>());
           expect(service.statusInputPersonalization, isA<bool>());
           expect(service.statusCapsLock, isA<bool>());
           expect(service.statusExplorerHome, isA<bool>());
@@ -188,8 +188,8 @@ void main() {
           expect(service.disableLegacyBalloon(), isA<Future<void>>());
           expect(service.enableScreenEdgeSwipe(), isA<Future<void>>());
           expect(service.disableScreenEdgeSwipe(), isA<Future<void>>());
-          expect(service.enableNewContextMenu(), isA<Future<void>>());
-          expect(service.disableNewContextMenu(), isA<Future<void>>());
+          expect(service.enableClassicContextMenu(), isA<Future<void>>());
+          expect(service.disableClassicContextMenu(), isA<Future<void>>());
           expect(service.enableInputPersonalization(), isA<Future<void>>());
           expect(service.disableInputPersonalization(), isA<Future<void>>());
           expect(service.enableCapsLock(), isA<Future<void>>());
@@ -305,23 +305,23 @@ void main() {
     });
 
     group('New Context Menu Status', () {
-      test('statusNewContextMenu can be mocked', () {
-        when(() => mockService.statusNewContextMenu).thenReturn(true);
-        expect(mockService.statusNewContextMenu, isTrue);
+      test('statusClassicContextMenu can be mocked', () {
+        when(() => mockService.statusClassicContextMenu).thenReturn(true);
+        expect(mockService.statusClassicContextMenu, isTrue);
       });
 
-      test('enableNewContextMenu can be called without system changes', () async {
-        when(() => mockService.enableNewContextMenu()).thenAnswer((_) async => Future.value());
+      test('enableClassicContextMenu can be called without system changes', () async {
+        when(() => mockService.enableClassicContextMenu()).thenAnswer((_) async => Future.value());
 
-        await mockService.enableNewContextMenu();
-        verify(() => mockService.enableNewContextMenu()).called(1);
+        await mockService.enableClassicContextMenu();
+        verify(() => mockService.enableClassicContextMenu()).called(1);
       });
 
-      test('disableNewContextMenu can be called without system changes', () async {
-        when(() => mockService.disableNewContextMenu()).thenAnswer((_) async => Future.value());
+      test('disableClassicContextMenu can be called without system changes', () async {
+        when(() => mockService.disableClassicContextMenu()).thenAnswer((_) async => Future.value());
 
-        await mockService.disableNewContextMenu();
-        verify(() => mockService.disableNewContextMenu()).called(1);
+        await mockService.disableClassicContextMenu();
+        verify(() => mockService.disableClassicContextMenu()).called(1);
       });
     });
 
@@ -504,7 +504,7 @@ void main() {
         when(() => mockService.enableLegacyBalloon()).thenAnswer((_) async => Future.value());
         when(() => mockService.statusScreenEdgeSwipe).thenReturn(false);
         when(() => mockService.enableScreenEdgeSwipe()).thenAnswer((_) async => Future.value());
-        when(() => mockService.statusNewContextMenu).thenReturn(true);
+        when(() => mockService.statusClassicContextMenu).thenReturn(true);
         when(() => mockService.statusExplorerHome).thenReturn(false);
         when(() => mockService.enableExplorerHome()).thenAnswer((_) async => Future.value());
         when(() => mockService.statusExplorerGallery).thenReturn(false);
@@ -514,7 +514,7 @@ void main() {
         await mockService.enableLegacyBalloon();
         expect(mockService.statusScreenEdgeSwipe, isFalse);
         await mockService.enableScreenEdgeSwipe();
-        expect(mockService.statusNewContextMenu, isTrue);
+        expect(mockService.statusClassicContextMenu, isTrue);
         expect(mockService.statusExplorerHome, isFalse);
         await mockService.enableExplorerHome();
         expect(mockService.statusExplorerGallery, isFalse);

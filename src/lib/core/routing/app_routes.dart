@@ -18,6 +18,11 @@ enum RouteMeta({
   required final Object? icon,
 }) {
   home(path: '/', section: .main, icon: msicons.FluentIcons.home_24_regular),
+  customizations(
+    path: '/customizations',
+    section: .main,
+    icon: msicons.FluentIcons.window_20_regular,
+  ),
   tweaks(path: '/tweaks', section: .main, icon: msicons.FluentIcons.wrench_24_regular),
   msStore(path: '/msstore', section: .main, icon: msicons.FluentIcons.store_microsoft_24_regular),
   systemMonitor(path: '/monitor', section: .main, icon: msicons.FluentIcons.shield_lock_20_regular),
@@ -53,6 +58,7 @@ enum RouteMeta({
   String get label {
     return switch (this) {
       .home => t.pageHome,
+      .customizations => t.pageCustomizations,
       .tweaks => t.pageTweaks,
       .msStore => t.pageMSStore,
       .systemMonitor => t.pageSystemMonitor,
@@ -159,7 +165,14 @@ class AppRoutes() {
   }
 }
 
-const _mainNavigationRoutes = <RouteMeta>[.home, .tweaks, .msStore, .systemMonitor, .tools];
+const _mainNavigationRoutes = <RouteMeta>[
+  .home,
+  .customizations,
+  .tweaks,
+  .msStore,
+  .systemMonitor,
+  .tools,
+];
 
 const _footerNavigationRoutes = <RouteMeta>[.settings];
 

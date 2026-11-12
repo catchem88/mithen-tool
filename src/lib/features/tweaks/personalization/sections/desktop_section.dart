@@ -17,7 +17,7 @@ class const DesktopSection({super.key}) extends StatelessWidget {
         _NotificationCard(),
         _LegacyBalloonCard(),
         _ScreenEdgeSwipeCard(),
-        _NewContextMenuCard(),
+        _ClassicContextMenuCard(),
         _ExplorerHomeCard(),
         _ExplorerGalleryCard(),
       ],
@@ -101,20 +101,21 @@ class const _ScreenEdgeSwipeCard() extends ConsumerWidget {
   }
 }
 
-class const _NewContextMenuCard() extends ConsumerWidget {
+class const _ClassicContextMenuCard() extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final bool status = ref.watch(newContextMenuStatusProvider);
+    final bool status = ref.watch(classicContextMenuStatusProvider);
 
     return CardListTile(
-      title: t.tweaksPersonalizationNewContextMenu,
+      title: t.tweaksPersonalizationClassicContextMenu,
+      description: t.tweaksPersonalizationClassicContextMenuDescription,
       trailing: CardToggleSwitch(
         value: status,
         onChanged: (value) async {
           value
-              ? await ref.read(personalizationServiceProvider).enableNewContextMenu()
-              : await ref.read(personalizationServiceProvider).disableNewContextMenu();
-          ref.invalidate(newContextMenuStatusProvider);
+              ? await ref.read(personalizationServiceProvider).enableClassicContextMenu()
+              : await ref.read(personalizationServiceProvider).disableClassicContextMenu();
+          ref.invalidate(classicContextMenuStatusProvider);
         },
       ),
     );

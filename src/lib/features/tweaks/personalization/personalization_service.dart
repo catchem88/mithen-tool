@@ -7,6 +7,7 @@ import 'package:win32_registry/win32_registry.dart';
 
 import '../../../core/cli_generator/annotations.dart';
 import '../../../core/services/win_registry_service.dart';
+import '../../customizations/data/windhawk_service.dart';
 
 part 'personalization_service.g.dart';
 
@@ -48,14 +49,14 @@ abstract class PersonalizationService() {
   Future<void> disableScreenEdgeSwipe();
 
   @CliToggle(
-    name: 'new-context-menu',
-    status: 'statusNewContextMenu',
-    enable: 'enableNewContextMenu',
-    disable: 'disableNewContextMenu',
+    name: 'classic-context-menu',
+    status: 'statusClassicContextMenu',
+    enable: 'enableClassicContextMenu',
+    disable: 'disableClassicContextMenu',
   )
-  bool get statusNewContextMenu;
-  Future<void> enableNewContextMenu();
-  Future<void> disableNewContextMenu();
+  bool get statusClassicContextMenu;
+  Future<void> enableClassicContextMenu();
+  Future<void> disableClassicContextMenu();
 
   @CliToggle(
     name: 'input-personalization',
@@ -99,6 +100,7 @@ abstract class PersonalizationService() {
 }
 
 class const PersonalizationServiceImpl() implements PersonalizationService {
+  static const WindhawkService _classicMenu = WindhawkService();
   static const ListEquality<dynamic> _listEquality = ListEquality();
   static final _cplValue = Uint8List.fromList([
     0,
@@ -441,35 +443,22 @@ class const PersonalizationServiceImpl() implements PersonalizationService {
   }
 
   @override
-  bool get statusNewContextMenu {
-    return WinRegistryService.readString(
-          CURRENT_USER,
-          r'Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32',
-          '',
-        )?.isNotEmpty ??
-        true;
+  bool get statusClassicContextMenu {
+    // Mirrors the stored intent, so the toggle keeps reading correctly while
+    // "Mithen context menu" temporarily removes the native override.
+    return _classicMenu.classicMenuIntent;
   }
 
   @override
-  Future<void> enableNewContextMenu() async {
-    await WinRegistryService.deleteKey(
-      WinRegistryService.currentUser,
-      r'Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}',
-    );
-    await Process.run('taskkill.exe', ['/im', 'explorer.exe', '/f']);
-    await Process.run('explorer.exe', [], runInShell: true);
+  Future<void> enableClassicContextMenu() async {
+    await _classicMenu.setClassicMenuIntent(true);
+    await _classicMenu.restartExplorer();
   }
 
   @override
-  Future<void> disableNewContextMenu() async {
-    await WinRegistryService.writeRegistryValue(
-      WinRegistryService.currentUser,
-      r'Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32',
-      '',
-      '',
-    );
-    await Process.run('taskkill.exe', ['/im', 'explorer.exe', '/f']);
-    await Process.run('explorer.exe', [], runInShell: true);
+  Future<void> disableClassicContextMenu() async {
+    await _classicMenu.setClassicMenuIntent(false);
+    await _classicMenu.restartExplorer();
   }
 
   @override
@@ -728,8 +717,8 @@ bool screenEdgeSwipeStatus(Ref ref) {
 }
 
 @riverpod
-bool newContextMenuStatus(Ref ref) {
-  return ref.watch(personalizationServiceProvider).statusNewContextMenu;
+bool classicContextMenuStatus(Ref ref) {
+  return ref.watch(personalizationServiceProvider).statusClassicContextMenu;
 }
 
 @riverpod

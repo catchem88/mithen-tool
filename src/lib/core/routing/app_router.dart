@@ -4,6 +4,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../extensions.dart';
 import '../../features/cleanup/presentation/cleanup_page.dart';
+import '../../features/customizations/presentation/customizations_page.dart';
 import '../../features/home/home_page.dart';
 import '../../features/ms_store/presentation/pages/ms_store_page.dart';
 import '../../features/ms_store/presentation/pages/ms_store_product_page.dart';
@@ -41,6 +42,11 @@ GoRouter appRouter(Ref ref) {
             path: RouteMeta.home.path,
             name: 'home',
             builder: (context, state) => const HomePage(),
+          ),
+          GoRoute(
+            path: RouteMeta.customizations.path,
+            name: 'customizations',
+            builder: (context, state) => const CustomizationsPage(),
           ),
           GoRoute(
             path: RouteMeta.tweaks.path,
