@@ -2,6 +2,7 @@
 .vscode
 .code-workspace
 *.code-workspace
+installer/*
 .ai/
 .qm/
 .kilo/
