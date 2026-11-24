@@ -92,21 +92,6 @@ const List<String> _musicExtensions = [
   'mka',
 ];
 
-const List<String> _zipExtensions = [
-  'zip',
-  '7z',
-  'rar',
-  'tar',
-  'gz',
-  'bz2',
-  'xz',
-  'iso',
-  'cab',
-  'lzma',
-  'zst',
-  'tgz',
-];
-
 List<(String, String)> _pairs(
   List<String> extensions,
   String Function(String extension) progIdFor,
@@ -138,11 +123,5 @@ final List<MithenAppInfo> mithenApps = [
     description: 'Lightweight music player for local files and support for YouTube Music',
     url: 'https://github.com/catchem88/mithen-music',
     associations: _pairs(_musicExtensions, (_) => 'MithenMusic.Audio'),
-  ),
-  MithenAppInfo(
-    name: 'MithenZip',
-    description: 'Lightweight archive reader and maker',
-    url: 'https://github.com/catchem88/mithen-zip',
-    associations: _pairs(_zipExtensions, (_) => 'MithenZip.Archive'),
   ),
 ];
