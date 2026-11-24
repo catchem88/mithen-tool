@@ -12,6 +12,7 @@ import '../../utils.dart';
 import '../../utils_gui.dart';
 import '../cleanup/presentation/cleanup_scan_dialog.dart';
 import 'data/mithen_apps.dart';
+import 'data/seven_zip_tweaks.dart';
 import 'tools_providers.dart';
 
 /// Microsoft Activation Scripts (MAS).
@@ -86,6 +87,18 @@ class const ToolsPage({super.key}) extends ConsumerWidget {
           ),
         ),
         CardHighlight(
+          icon: msicons.FluentIcons.archive_20_regular,
+          label: t.toolsSevenZip,
+          description: t.toolsSevenZipDescription,
+          action: Tooltip(
+            message: SevenZipTweaks.isInstalled ? t.toolsSevenZip : t.toolsSevenZipUnavailable,
+            child: Button(
+              onPressed: SevenZipTweaks.isInstalled ? () => _applySevenZipTweaks(context) : null,
+              child: Text(t.toolsRun),
+            ),
+          ),
+        ),
+        CardHighlight(
           icon: msicons.FluentIcons.apps_20_regular,
           label: t.toolsMithenApps,
           description: t.toolsMithenAppsDescription,
@@ -134,6 +147,36 @@ class const ToolsPage({super.key}) extends ConsumerWidget {
           ),
           const SizedBox(width: 8),
           Button(onPressed: () => launchURL(app.url), child: Text(t.toolsOpenGithub)),
+        ],
+      ),
+    );
+  }
+
+  /// Re-applies the 7-Zip associations, icon and shell menu for this system.
+  Future<void> _applySevenZipTweaks(BuildContext context) async {
+    final NavigatorState navigator = Navigator.of(context, rootNavigator: true);
+    final Future<Object?> dialog = showLoadingDialog(
+      context,
+      t.toolsSevenZip,
+      message: t.toolsSevenZipRunning,
+    );
+    Object? error;
+    try {
+      await SevenZipTweaks.apply();
+    } catch (e) {
+      error = e;
+      logger.e('tools: 7-Zip tweaks failed', error: e);
+    }
+    if (navigator.canPop()) navigator.pop();
+    await dialog;
+    if (!context.mounted) return;
+    await showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) => ContentDialog(
+        title: Text(error == null ? t.toolsSevenZipDone : t.toolsSevenZipFailed),
+        content: Text(error?.toString() ?? t.toolsSevenZipDone),
+        actions: [
+          FilledButton(onPressed: () => Navigator.pop(dialogContext), child: Text(t.close)),
         ],
       ),
     );

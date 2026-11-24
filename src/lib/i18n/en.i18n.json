@@ -285,5 +285,11 @@
     "toolsReassociateRunning": "Re-applying file associations...",
     "toolsReassociateDone": "File associations re-applied",
     "toolsReassociateFailed": "Re-associating failed",
-    "toolsReassociateUnavailable": "Requires the MithenOS playbook files"
+    "toolsReassociateUnavailable": "Requires the MithenOS playbook files",
+    "toolsSevenZip": "7-Zip Tweaks",
+    "toolsSevenZipDescription": "Re-applies the archive file associations, the Windows archive icon and the context menu items after a 7-Zip update or reinstall",
+    "toolsSevenZipRunning": "Re-applying 7-Zip tweaks...",
+    "toolsSevenZipDone": "7-Zip tweaks applied",
+    "toolsSevenZipFailed": "7-Zip tweaks failed",
+    "toolsSevenZipUnavailable": "7-Zip is not installed"
 }

@@ -1,6 +1,10 @@
 # MithenTool v1.3.0
 
-Companion to MithenOS Playbook v1.1.1: the System Monitor tracks everything the playbook removes, and a new page brings the Windhawk customizations without asking anyone to install Windhawk.
+Companion to MithenOS Playbook v1.2.0: the System Monitor tracks everything the playbook removes, a new page brings the Windhawk customizations without asking anyone to install Windhawk, and the Tools page can re-apply the 7-Zip setup.
+
+## Tools
+
+- **7-Zip Tweaks** (new) - re-applies the MithenOS archive setup after a 7-Zip update or reinstall: archive formats point at their `7-Zip.<ext>` ProgId, every archive type keeps the Windows zipped-folder icon (`zipfldr.dll`), and the shell menu is reset to Extract files, Extract Here, Extract to "<folder>", Test archive, Add to archive and Add to "<name>.zip". Explorer refreshes through `SHChangeNotify`, so no restart is needed. The button is disabled when 7-Zip is not installed.
 
 ## Windows customizations (new)
 

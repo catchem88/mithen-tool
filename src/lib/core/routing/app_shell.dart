@@ -301,7 +301,7 @@ final class _AppShellState() extends ConsumerState<AppShell> {
                     style: const .new(fontWeight: .w500, fontSize: 14),
                   ),
                   subtitle: const Text(
-                    'Proud MithenOS user',
+                    'MithenOS user',
                     style: .new(fontSize: 11, fontWeight: .normal),
                   ),
                 ),
