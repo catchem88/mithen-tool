@@ -8,6 +8,8 @@ Companion to MithenOS Playbook v1.2.0: the System Monitor tracks everything the 
 
 ## Windows customizations (new)
 
+- **An existing Windhawk is left alone on upgrade** (fixed) - setup used to stop the Windhawk service and move `%ProgramData%\Windhawk\Engine\Mods` aside on every install, which left a real Windhawk registered with no mod DLLs. That work now only runs for the bundled engine.
+
 A new sidebar entry **above Tweaks & Optimizations** with one toggle per Windhawk mod: classic context menu, taskbar classic context menu, classic Explorer navigation bar, legacy file copy, modern folder picker, taskbar height/icon size, Start menu without Recommended, pinned-only Start menu, empty notification center.
 
 - **Bundled engine + compiler, inside the MithenTool folder** (`windhawk-engine\`, no `Program Files\Windhawk`) - offline - MithenTool ships the Windhawk **2.0.0-alpha.7** engine (no UI; mods are compiled locally during setup so they match the installed Windows build). Setup deploys it headlessly: service registered, tray icon hidden, update check disabled, mods pre-registered disabled with the settings from the backup. No network access is used at install or at toggle time.

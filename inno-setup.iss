@@ -203,6 +203,16 @@ procedure PrepareForUpgrade();
 var
   ResultCode: Integer;
 begin
+  KillImage('mithentoolw.exe');
+  KillImage('mithentool.exe');
+  Sleep(500);
+
+  // A Windhawk we did not deploy owns its service, processes and
+  // %ProgramData%\Windhawk\Engine\Mods - stopping it or moving those aside
+  // leaves it registered with no mod DLLs.
+  if not ShouldDeployWindhawk() then
+    Exit;
+
   // The Windhawk service keeps windhawk.exe/windhawk.dll open, and the
   // injected engine DLL stays mapped in every process it attached to.
   // Stop the service, close the apps, then move the old folders aside so
